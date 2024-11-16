@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/auth/signup',[AuthController::class,'signup']);
+Route::post('/auth/registration',[AuthController::class,'registration']);
 
 Route::get('/', function () {
     return view('layout');
@@ -28,4 +32,10 @@ Route::get('/contacts', function () {
         'house' => 38,
     ];
     return view('main.contact', ['data'=>$data]);
+});
+
+Route::get('/',[MainController::class, 'index']);
+
+Route::get('/galary/{img}', function($img){
+    return view("main.galary",['img'=>$img]);
 });
