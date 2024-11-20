@@ -28,6 +28,9 @@
                             <a class="nav-link active" aria-current="page" href="/articles">Статьи</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/articles/create">Create article</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="/about">О нас</a>
                         </li>
                         <li class="nav-item">

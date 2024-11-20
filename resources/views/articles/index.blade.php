@@ -1,6 +1,11 @@
 @extends('layout')
 @use('App\Models\User', 'User')
 @section('content')
+@if(session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
 <section>
     <table class="table">
         <thead>
@@ -15,7 +20,7 @@
             @foreach ($articles as $article) 
                 <tr>
                     <th scope="row">{{ $article->date }}</th>
-                    <td>{{ $article->name }}</td>
+                    <td><a href="articles/{{ $article->id }}">{{ $article->name }}</a></td>
                     <td style="width:20rem">{{ $article->desc }}</td>
                     <td>
                         {{User::findOrFail($article->user_id)->name}}
@@ -25,4 +30,6 @@
         </tbody>
     </table>
 </section>
+
+{{$articles->links()}}
 @endsection
