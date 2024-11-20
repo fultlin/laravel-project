@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\AuthController;
@@ -39,3 +40,6 @@ Route::get('/',[MainController::class, 'index']);
 Route::get('/galary/{img}', function($img){
     return view("main.galary",['img'=>$img]);
 });
+
+// Article
+Route::resource('articles', ArticleController::class);
