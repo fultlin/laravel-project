@@ -43,3 +43,4 @@ Route::get('/galary/{img}', function($img){
 
 // Article
 Route::resource('articles', ArticleController::class);
+Route::post('/articles/{article}/comments', [CommentController::class, 'store']);

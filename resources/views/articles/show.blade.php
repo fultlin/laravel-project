@@ -16,5 +16,17 @@
         </form>
     </div>
   </div>
+  <div class="comments-section">
+    <h4>Comments</h4>
+    @if($comments->isEmpty())
+        <p>No comments yet.</p>
+    @else
+        @foreach($comments as $comment)
+            <div class="comment">
+                <p><strong>{{ $comment->name }}:</strong> {{ $comment->desc }}</p>
+            </div>
+        @endforeach
+    @endif
+</div>
 </div>
 @endsection('content')
