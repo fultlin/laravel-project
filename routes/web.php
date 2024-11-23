@@ -4,6 +4,7 @@ use App\Http\Controllers\ArticleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,4 +44,9 @@ Route::get('/galary/{img}', function($img){
 
 // Article
 Route::resource('articles', ArticleController::class);
-Route::post('/articles/{article}/comments', [CommentController::class, 'store']);
+
+// Comment
+Route::post('/comment', [CommentController::class, 'store']);
+Route::get('/comment/{id}/edit', [CommentController::class, 'edit']);
+Route::post('/comment/{comment}/update', [CommentController::class, 'update']);
+Route::get('/comment/{comment}/delete', [CommentController::class, 'destroy']);
