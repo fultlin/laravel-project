@@ -21,7 +21,7 @@
         </form>
     </div>
   </div>
-  <div class="comments-section flex ">
+  <div class="comments-section flex">
     <h3>Comments</h3>
     @if($comments->isEmpty())
         <p>No comments yet.</p>
