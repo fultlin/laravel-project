@@ -6,9 +6,29 @@ use Illuminate\Http\Request;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use App\Jobs\VeryLongJob;
+use App\Mail\NewCommentMail;
 
 class CommentController extends Controller
 {
+    public function index()
+    {
+        $comments = Comment::latest()->paginate(10);
+        return view('comment.index', ['comments' => $comments]);
+    }
+
+    public function accept(Comment $comment) {
+        $comment->accept = true;
+        $comment->save();
+        return redirect()->route('comment.index');
+    }
+
+    public function reject(Comment $comment) {
+        $comment->accept = false;
+        $comment->save();
+        return redirect()->route('comment.index');
+    }
+
     public function store(Request $request) {
         $request->validate([
             'name'=>'required|min:4',
@@ -20,8 +40,12 @@ class CommentController extends Controller
         $comment->desc = request('desc');
         $comment->article_id = request('article_id');
         $comment->user_id = Auth::id();
-        if ($comment->save()) return redirect()->back()->with('status', 'Add new comment');
-        else return redirect()->back()->with('status', 'Add failed');
+        if ($comment->save()) {
+            VeryLongJob::dispatch($comment);
+            return redirect()->back()->with('status', 'Add new comment');
+        } else {
+            return redirect()->back()->with('status', 'Add failed');
+        };
     }
 
     public function edit($id) {
