@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Comment;
+use App\Models\Article;
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use App\Jobs\VeryLongJob;
 use App\Mail\NewCommentMail;
+use App\Notifications\NewCommentNotify;
 
 class CommentController extends Controller
 {
@@ -18,8 +22,10 @@ class CommentController extends Controller
     }
 
     public function accept(Comment $comment) {
+        $article = Article::findOrFail($comment->article_id);
+        $users = User::where('id', '!=', auth()->user()->id)->get();
         $comment->accept = true;
-        $comment->save();
+        if ($comment->save()) Notification::send($users, new NewCommentNotify($article, $comment->name));
         return redirect()->route('comment.index');
     }
 
@@ -30,6 +36,7 @@ class CommentController extends Controller
     }
 
     public function store(Request $request) {
+        
         $request->validate([
             'name'=>'required|min:4',
             'desc'=>'required|max:256'
