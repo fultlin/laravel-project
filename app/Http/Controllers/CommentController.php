@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use App\Jobs\VeryLongJob;
 use App\Mail\NewCommentMail;
 use App\Notifications\NewCommentNotify;
@@ -17,11 +19,22 @@ class CommentController extends Controller
 {
     public function index()
     {
-        $comments = Comment::latest()->paginate(10);
+        $page = isset($_GET['page']) ? $_GET['page'] : 0;
+        $comments = Cache::remember('comment'.$page, 3000, function(){
+            return Comment::latest()->paginate(10);
+        });
         return view('comment.index', ['comments' => $comments]);
     }
 
     public function accept(Comment $comment) {
+        $keys = DB::table('cache')->whereRaw('`key` GLOB :key', [':key'=>'comment*[0-9]'])->get();
+        foreach ($keys as $param) {
+            Cache::forget($param->key);
+        }
+        $keys = DB::table('cache')->whereRaw('`key` GLOB :key', [':key'=>'comment_article'.$comment->article_id])->get();
+        foreach ($keys as $param) {
+            Cache::forget($param->key);
+        }
         $article = Article::findOrFail($comment->article_id);
         $users = User::where('id', '!=', $comment->user_id)->get();
         $comment->accept = true;
@@ -30,13 +43,18 @@ class CommentController extends Controller
     }
 
     public function reject(Comment $comment) {
+        Cache::flush();
         $comment->accept = false;
         $comment->save();
         return redirect()->route('comment.index');
     }
 
     public function store(Request $request) {
-        
+        $keys = DB::table('cache')->whereRaw('`key` GLOB :key', [':key'=>'comment*[0-9]'])->get();
+        foreach ($keys as $param) {
+            Cache::forget($param->key);
+        }
+
         $request->validate([
             'name'=>'required|min:4',
             'desc'=>'required|max:256'
@@ -62,6 +80,14 @@ class CommentController extends Controller
     }
 
     public function update(Request $request, Comment $comment) {
+        $keys = DB::table('cache')->whereRaw('`key` GLOB :key', [':key'=>'comment*[0-9]'])->get();
+        foreach ($keys as $param) {
+            Cache::forget($param->key);
+        }
+        $keys = DB::table('cache')->whereRaw('`key` GLOB :key', [':key'=>'comment_article'.$comment->article_id])->get();
+        foreach ($keys as $param) {
+            Cache::forget($param->key);
+        }
         Gate::authorize('update_comment', $comment);
         $request->validate([
             'name'=>'required|min:4',
@@ -75,6 +101,7 @@ class CommentController extends Controller
     }
 
     public function destroy(Comment $comment) {
+        Cache::flush();
         Gate::authorize('update_comment', $comment);
         if ($comment->delete()) {
             return redirect()->route('articles.show', $comment->article_id)->with('status', 'Delete succes');
