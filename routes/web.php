@@ -59,3 +59,4 @@ Route::controller(CommentController::class)->prefix('/comment')->middleware('aut
     Route::get('/{comment}/reject', 'reject')->name('comment.reject');
 });
 
+Route::get('articles/{article}', [ArticleController::class, 'show'])->name('articles.show')->middleware('checkclick');

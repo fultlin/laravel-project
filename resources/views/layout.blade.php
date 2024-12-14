@@ -27,21 +27,21 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/articles">Статьи</a>
+                            <a class="nav-link @active('articles')" aria-current="page" href="/articles">Статьи</a>
                         </li>
                         @can('create')
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="/articles/create">Create article</a>
+                                <a class="nav-link @active('articles/create')" aria-current="page" href="/articles/create">Create article</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="/comment/index">Комментарии</a>
+                                <a class="nav-link @active('articles/index')" aria-current="page" href="/comment/index">Комментарии</a>
                             </li>
                         @endcan
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/about">О нас</a>
+                            <a class="nav-link @active('about')" aria-current="page" href="/about">О нас</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/contacts">Контакты</a>
+                            <a class="nav-link @active('contacts')" href="/contacts">Контакты</a>
                         </li>
                         @auth
                         <li class="nav-item dropdown">
